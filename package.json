@@ -1,0 +1,38 @@
+{
+  "name": "dechipera",
+  "version": "1.0.0",
+  "description": "Firebase config template and env encryption",
+  "main": "bin/cli.js",
+  "files": [
+    "bin/"
+  ],
+  "bin": {
+    "dechipera": "./bin/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "semantic-release": "semantic-release"
+  },
+  "keywords": [
+    "cli",
+    "env",
+    "encrypt",
+    "firebase",
+    "aes"
+  ],
+  "author": "rohmatstar",
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
+    "@semantic-release/npm": "^12.0.2",
+    "semantic-release": "^24.2.6"
+  },
+  "dependencies": {
+    "auxy": "^1.1.2"
+  }
+}
