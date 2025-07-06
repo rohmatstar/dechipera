@@ -49,16 +49,14 @@ async function encrypt(text) {
   return iv.toString("hex") + ":" + encrypted.toString("hex");
 }
 
+const prompt = require("prompt-sync")({ sigint: true });
 async function decrypt(encryptedText) {
   // Hide password input
-  const password = await question(
-    "Enter the password (input will be hidden): ",
-    {
-      hideEchoBack: true,
-    }
-  );
+  const password = prompt("🔑 Enter the password: ", { echo: "*" });
 
   const [ivHex, dataHex] = encryptedText.split(":");
+  if (!ivHex || !dataHex) throw new Error("Format encrypted text invalid!");
+
   const iv = Buffer.from(ivHex, "hex");
   const encryptedData = Buffer.from(dataHex, "hex");
   const key = crypto.createHash("sha256").update(password).digest();
