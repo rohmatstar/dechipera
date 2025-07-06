@@ -1,6 +1,6 @@
 {
   "name": "dechipera",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "env encryption",
   "main": "bin/cli.js",
   "files": [
