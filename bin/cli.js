@@ -9,21 +9,6 @@ const targetDir = args[0] || ".";
 const mode = args.includes("--dec") ? "decrypt" : "encrypt";
 const envPath = path.join(targetDir, ".env");
 const encPath = path.join(targetDir, "env.enc");
-const configPath = path.join(targetDir, "firebaseConfig.js");
-
-const firebaseKeys = [
-  "apiKey",
-  "authDomain",
-  "projectId",
-  "storageBucket",
-  "messagingSenderId",
-  "appId",
-  "measurementId",
-];
-
-function generateRandomPort() {
-  return Math.floor(1000 + Math.random() * 9000);
-}
 
 function encrypt(text, password) {
   const iv = crypto.randomBytes(16);
@@ -64,35 +49,13 @@ function decrypt(encryptedText, password) {
     }
 
     // ENCRYPT MODE
-    let envData = `PORT=${generateRandomPort()}\n`;
-
-    if (fs.existsSync(configPath)) {
-      const configModule = require(path.resolve(configPath));
-      if (typeof configModule !== "object")
-        throw new Error("firebaseConfig.js harus export object");
-
-      firebaseKeys.forEach((key) => {
-        const val = configModule[key] || "";
-        envData += `${key.toUpperCase()}=${val}\n`;
-      });
-
-      fs.unlinkSync(configPath); // delete config
-    } else {
-      const blankTemplate = `module.exports = {\n${firebaseKeys
-        .map((k) => `  ${k}: "",`)
-        .join("\n")}\n};\n`;
-      fs.writeFileSync(configPath, blankTemplate);
-      console.log(
-        "✅ firebaseConfig.js belum ada, template dibuat. Silakan isi dan jalankan ulang."
-      );
+    if (!fs.existsSync(envPath)) {
+      console.warn("⚠️  .env tidak ditemukan");
       return;
     }
-
-    fs.writeFileSync(envPath, envData);
-
-    const encrypted = encrypt(envData, password);
+    const decrypted = fs.readFileSync(envPath, "utf8");
+    const encrypted = encrypt(decrypted, password);
     fs.writeFileSync(encPath, encrypted);
-    fs.unlinkSync(envPath);
     console.log("✅ .env berhasil dienkripsi ke env.enc");
   } catch (err) {
     console.error("❌ Error:", err.message);
