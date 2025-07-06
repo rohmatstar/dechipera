@@ -78,7 +78,7 @@ async function decrypt(encryptedText) {
         return;
       }
       const encrypted = fs.readFileSync(encPath, "utf8");
-      const decrypted = decrypt(encrypted);
+      const decrypted = await decrypt(encrypted);
       fs.writeFileSync(envPath, decrypted);
       console.log("✅ Successfully decrypted .env!");
       return;
@@ -90,7 +90,7 @@ async function decrypt(encryptedText) {
       return;
     }
     const decrypted = fs.readFileSync(envPath, "utf8");
-    const encrypted = encrypt(decrypted);
+    const encrypted = await encrypt(decrypted);
     fs.writeFileSync(encPath, encrypted);
   } catch (err) {
     console.error("❌ Error:", err.message);
