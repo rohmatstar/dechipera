@@ -3,17 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const readline = require("readline");
-const { promisify } = require("util");
-
-// Create readline interface
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-// Promisify question function for easier use with async/await
-const question = promisify(rl.question).bind(rl);
 
 function generatePassword() {
   const length = 124;
@@ -39,6 +28,8 @@ const targetDir = targetArg || ".";
 // Find argument with prefix "--pass:"
 const passArg = args.find((arg) => arg.startsWith("--pass:"));
 const passwordFromArg = passArg ? passArg.split(":")[1] : null;
+
+const shouldExit = !args.includes("--no-exit");
 
 const envPath = path.join(targetDir, ".env");
 const encPath = path.join(targetDir, "env.enc");
@@ -88,7 +79,9 @@ async function decrypt(encryptedText) {
       const decrypted = await decrypt(encrypted);
       fs.writeFileSync(envPath, decrypted);
       console.log("✅ Successfully decrypted .env!");
-      process.exit(1);
+      if (shouldExit) {
+        process.exit(0);
+      }
     }
 
     // ENCRYPT MODE
@@ -99,7 +92,9 @@ async function decrypt(encryptedText) {
     const decrypted = fs.readFileSync(envPath, "utf8");
     const encrypted = await encrypt(decrypted);
     fs.writeFileSync(encPath, encrypted);
-    process.exit(1);
+    if (shouldExit) {
+      process.exit(0);
+    }
   } catch (err) {
     console.error("❌ Error:", err.message);
   }
