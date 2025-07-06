@@ -30,8 +30,16 @@ function generatePassword() {
 }
 
 const args = process.argv.slice(2);
-const targetDir = args[0] || ".";
 const mode = args.includes("--dec") ? "decrypt" : "encrypt";
+
+// Get arguments with exlude flag
+const targetArg = args.find((arg) => !arg.startsWith("--"));
+const targetDir = targetArg || ".";
+
+// Find argument with prefix "--pass:"
+const passArg = args.find((arg) => arg.startsWith("--pass:"));
+const passwordFromArg = passArg ? passArg.split(":")[1] : null;
+
 const envPath = path.join(targetDir, ".env");
 const encPath = path.join(targetDir, "env.enc");
 
@@ -51,8 +59,9 @@ async function encrypt(text) {
 
 const prompt = require("prompt-sync")({ sigint: true });
 async function decrypt(encryptedText) {
-  // Hide password input
-  const password = prompt("🔑 Enter the password: ", { echo: "*" });
+  // if password got from param --pass, use it, else use prompt
+  const password =
+    passwordFromArg || prompt("🔑 Enter the password: ", { echo: "*" });
 
   const [ivHex, dataHex] = encryptedText.split(":");
   if (!ivHex || !dataHex) throw new Error("Format encrypted text invalid!");
